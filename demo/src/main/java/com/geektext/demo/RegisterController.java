@@ -7,43 +7,37 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
-@RestController
-@RequestMapping("/register")
-
+@Controller
 public class RegisterController {
     @Autowired
     private ProfileRepository profileRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    /*@GetMapping(path="/register")
-    public @ResponseBody String registerForm()
+    @GetMapping("/register")
+    public String registerForm(Model model)
     {
-
+        model.addAttribute("profile", new ProfileDto());
         return "register";
     }
 
-    @PostMapping(path="/register")
-    public String registerSubmit(@ModelAttribute Profile profile, Model model)
+
+    @PostMapping("/register")
+    public String registerSubmit(@ModelAttribute @Valid ProfileDto profileDto)
     {
-        model.addAttribute("register", profile);
+        Profile newProfile = new Profile();
+
+        newProfile.setEmail(profileDto.getEmail());
+        newProfile.setPassword(passwordEncoder.encode(profileDto.getPassword()));
+        newProfile.setFname(profile.getFname());
+        newProfile.setLname(profile.getLname());
+        newProfile.setAddress(profile.getAddress());
+        newProfile.setPhone(profile.getPhone());
+        profileRepo.save(newProfile);
         return "registrationResult";
-    } */
-
-
-    public @ResponseBody String addNewProfile (@RequestParam String fname, @RequestParam String lname, @RequestParam
-                                               String email, @RequestParam String address, @RequestParam String phone,
-                                               @RequestParam String password)
-    {
-        Profile user = new Profile();
-        user.setFirstName(fname);
-        user.setLastName(lname);
-        user.setEmail(email);
-        user.setAddress(address);
-        user.setPhone(phone);
-        user.setPassword(password);
-        profileRepo.save(user);
-        return "register";
 
     }
 }

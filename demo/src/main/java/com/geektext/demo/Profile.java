@@ -1,23 +1,47 @@
 package com.geektext.demo;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
 public class Profile
 {
+    /**************************************************************************
+     * CLASS VARIABLES
+     *************************************************************************/
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer userID;
+
     @Id
+    @NotNull
     private String email;
 
+    @NotNull
     private String password;
 
-    private String address;
-
+    @NotNull
     private String fname;
 
+    @NotNull
     private String lname;
 
+    private String address;
     private String phone;
+
+    /**************************************************************************
+     * GETS / SETTERS
+     *************************************************************************/
+    public Integer getUserID()
+    {
+        return userID;
+    }
+
+    public void setUserID(Integer userID)
+    {
+        this.userID = userID;
+    }
 
     public String getEmail()
     {
@@ -49,22 +73,22 @@ public class Profile
         this.address = address;
     }
 
-    public String getFirstName()
+    public String getFname()
     {
         return fname;
     }
 
-    public void setFirstName(String fname)
+    public void setFname(String fname)
     {
         this.fname = fname;
     }
 
-    public String getLastName()
+    public String getLname()
     {
         return lname;
     }
 
-    public void setLastName(String lname)
+    public void setLname(String lname)
     {
         this.lname = lname;
     }
