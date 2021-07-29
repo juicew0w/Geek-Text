@@ -1,20 +1,22 @@
 package com.geektext.demo;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+import java.util.*;
 
 @Entity
-public class Profile
-{
+public class User {
     /**************************************************************************
      * CLASS VARIABLES
      *************************************************************************/
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer userID;
+
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
+    @Column(unique = true)
     @NotNull
     private String email;
 
@@ -30,28 +32,28 @@ public class Profile
     private String address;
     private String phone;
 
+    private boolean enabled;
+    private boolean tokenExpired;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_roles", joinColumns = @JoinColumn(
+            name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private Set<Role> roles;
+
+
     /**************************************************************************
      * GETS / SETTERS
      *************************************************************************/
-    public Integer getUserID()
-    {
-        return userID;
-    }
+    public Integer getId() { return id; }
 
-    public void setUserID(Integer userID)
-    {
-        this.userID = userID;
-    }
+    public void setId(Integer id) { this.id = id; }
 
-    public String getEmail()
-    {
-        return email;
-    }
+    public String getEmail() { return email; }
 
-    public void setEmail(String email)
-    {
-        this.email = email;
-    }
+    public void setEmail(String email) { this.email = email; }
 
     public String getPassword()
     {
@@ -102,4 +104,16 @@ public class Profile
     {
         this.phone = phone;
     }
+
+    public boolean isEnabled() { return enabled; }
+
+    public void setEnabled(boolean enabled) { this.enabled = enabled; }
+
+    public boolean isTokenExpired() { return tokenExpired; }
+
+    public void setTokenExpired(boolean tokenExpired) { this.tokenExpired = tokenExpired; }
+
+    public Set<Role> getRoles() { return roles; }
+
+    public void setRoles(Set<Role> roles) { this.roles = roles; }
 }

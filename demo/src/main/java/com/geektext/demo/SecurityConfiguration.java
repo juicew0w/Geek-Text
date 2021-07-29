@@ -1,20 +1,37 @@
 package com.geektext.demo;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.*;
+
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private DataSource dataSource;
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private DatabaseUserDetailsService databaseUserDetailsService;
+    private DatabaseUserDetailsPasswordService databaseUserDetailsPasswordService;
+
+    public SecurityConfiguration(DatabaseUserDetailsService databaseUserDetailsService,
+                                 DatabaseUserDetailsPasswordService databaseUserDetailsPasswordService)
+    {
+        this.databaseUserDetailsPasswordService = databaseUserDetailsPasswordService;
+        this.databaseUserDetailsService = databaseUserDetailsService;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers("/register").permitAll()
-                    .anyRequest().authenticated()
+                    .antMatchers("/profile", "/shoppingcart").authenticated()
+                    .anyRequest().permitAll()
                     .and()
                 .formLogin()
                     .loginPage("/login")
@@ -24,23 +41,18 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .permitAll();
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception
-    {
-        auth.authenticationProvider(authProvider());
-    }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public DaoAuthenticationProvider authProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
+    public AuthenticationProvider daoAuthenticationProvider()
+    {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(this.databaseUserDetailsService);
+        return provider;
     }
 
 

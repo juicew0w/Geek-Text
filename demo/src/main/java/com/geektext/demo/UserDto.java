@@ -1,30 +1,24 @@
-public class ProfileDto {
+package com.geektext.demo;
+
+public class UserDto {
 
     /**************************************************************************
      * CLASS VARIABLES
      *************************************************************************/
 
-    @NotNull
-    @NotEmpty
+
     private Integer userId;
 
-    @NotNull
-    @NotEmpty
     private String email;
 
-    @NotNull
-    @NotEmpty
     private String fname;
 
-    @NotNull
-    @NotEmpty
     private String lname;
 
-    @NotNull
-    @NotEmpty
     private String password;
 
     private String address;
+
     private String phone;
 
     /**************************************************************************

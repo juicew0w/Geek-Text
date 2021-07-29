@@ -2,41 +2,51 @@ package com.geektext.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.*;
 
 
 @Controller
 public class RegisterController {
     @Autowired
-    private ProfileRepository profileRepo;
+    private UserRepository userRepo;
+    @Autowired
+    private RoleRepository roleRepo;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/register")
     public String registerForm(Model model)
     {
-        model.addAttribute("profile", new ProfileDto());
+        model.addAttribute("user", new UserDto());
         return "register";
     }
 
 
     @PostMapping("/register")
-    public String registerSubmit(@ModelAttribute @Valid ProfileDto profileDto)
+    public String registerSubmit(@ModelAttribute UserDto userDto)
     {
-        Profile newProfile = new Profile();
+        User newUser = new User();
+        Set<Role> addRole = new HashSet<Role>();
+        addRole.add(roleRepo.findByName("USER"));
 
-        newProfile.setEmail(profileDto.getEmail());
-        newProfile.setPassword(passwordEncoder.encode(profileDto.getPassword()));
-        newProfile.setFname(profile.getFname());
-        newProfile.setLname(profile.getLname());
-        newProfile.setAddress(profile.getAddress());
-        newProfile.setPhone(profile.getPhone());
-        profileRepo.save(newProfile);
+        newUser.setEmail(userDto.getEmail());
+        newUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        newUser.setFname(userDto.getFname());
+        newUser.setLname(userDto.getLname());
+        newUser.setAddress(userDto.getAddress());
+        newUser.setPhone(userDto.getPhone());
+        newUser.setEnabled(true);
+        newUser.setRoles(addRole);
+        userRepo.save(newUser);
         return "registrationResult";
 
     }
