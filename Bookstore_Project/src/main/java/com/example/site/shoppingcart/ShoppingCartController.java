@@ -1,9 +1,8 @@
 package com.example.site.shoppingcart;
 
-import java.util.List;
-
+import com.example.site.User.DatabaseUserDetailsService;
 import com.example.site.entity.ShoppingCart;
-import com.example.site.shoppingcart.ShoppingCartServices;
+import com.example.site.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,30 +18,40 @@ public class ShoppingCartController
      */
     @Autowired
     private ShoppingCartServices cartServices;
+
     @Autowired
-    private Integer profileServices;
+    private DatabaseUserDetailsService userServices;
 
     //Spring framework to show the shopping cart.
     @GetMapping(value = "/cart")
     public String showCart(Model model)
     {
-        //Profile profile = profileServices.getCurrentlyLoggedInCustomer(authentication);
-        //List<ShoppingCart> cartItems = cartServices.listAll(profile);
+        //User user = userServices.getUserByUsername();
+        //cartServices.listAll(user);
 
-        //model.addAllAttributes("Shopping Cart", cartItems)
+        model.addAttribute("cart", new ShoppingCart());
         return"shopping_cart";
     }
 
-    //@PostMapping("/cart")
-    //public void add(@RequestBody ShoppingCart product_id)
-    //{
-      //  services.save(product_id);
-    //}
+    public Integer add(Integer productId, Integer quantity, User user_Id)
+    {
+        //User profile = userServices.getUserByUsername();
+        Integer add = cartServices.addBook(productId, quantity, user_Id);
 
-    //@GetMapping("/cart/{user_id}")
-    //public ResponseEntity<ShoppingCart> get(@PathVariable Integer user_id)
-    //{
-        //ShoppingCart cart = services.get(user_id);  //get method in SCServices
-    //}
+        return add;
+    }
 
+    public void delete(User user_Id, Integer product_Id, Integer quantity)
+    {
+        //User profile = userServices.getUserByUsername();
+        cartServices.deleteBook(user_Id, product_Id, quantity);
+    }
+
+    public double update(User user_Id, Integer product_Id, Integer quantity)
+    {
+        //User profile = userServices.getUserByUsername();
+        double totalAmount;
+        totalAmount = cartServices.updateBook(user_Id, product_Id, quantity);
+        return totalAmount;
+    }
 }

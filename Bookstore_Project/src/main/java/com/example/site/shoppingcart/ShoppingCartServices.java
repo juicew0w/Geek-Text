@@ -3,6 +3,7 @@ package com.example.site.shoppingcart;
 import java.util.List;
 
 import com.example.site.entity.ShoppingCart;
+import com.example.site.entity.User;
 import com.example.site.shoppingcart.CartRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,46 +23,55 @@ public class ShoppingCartServices
     private CartRepo cartRepo;
 
     @Autowired
-    //private Book_Browsing productRepo;
+    //private Book_Browsing bookRepo;
 
-    public List<ShoppingCart> listAll(Integer profile)
+    public List<ShoppingCart> listAll(User profile)
     {
-        return cartRepo.showByProfile(profile);
+        return cartRepo.findByUser(profile);
     }
 
-    public Integer addBook(Integer productId, Integer quantity, Integer profile)
+    /**
+     * If the users shopping cart is not empty, the shopping cart quantity will increase as books are
+     * added. If the shopping cart is empty/does not exist, we will create a new shopping cart for the
+     * customer when they decide to add a book into their cart.
+     *
+     * We will then save shopping cart changes by calling the springframework data cart repository we created.
+     */
+    public Integer addBook(Integer productId, Integer quantity, User user_Id)
     {
-        Integer addQuantity = quantity;
-        //Book product = productRepo.findById(productId).get();
-        ShoppingCart shoppingCart = cartRepo.findByProfile(profile, productId);
+        Integer add = quantity;
 
-        //Might not include quantity!
+        //BookBrowsing book;
+        //book = bookRepo.findById(productId).get();
+
+        ShoppingCart shoppingCart = cartRepo.findAllBy(user_Id);
         if(shoppingCart != null)
         {
-            addQuantity = shoppingCart.getQuantity() + quantity;
-            shoppingCart.setQuantity(addQuantity);
+            add = shoppingCart.getQuantity() + quantity;
+            shoppingCart.setQuantity(add);
         }
         else
         {
             shoppingCart = new ShoppingCart();
-            shoppingCart.setQuantity(profile);
-            shoppingCart.setUser_Id(profile);
-            shoppingCart.setProduct_Id(productId);
+            shoppingCart.setQuantity(quantity);
+            shoppingCart.setUser_Id(user_Id);
+            //shoppingCart.setProduct_Id(productId);
         }
         cartRepo.save(shoppingCart);
-        return addQuantity;
+        return add;
     }
 
-    public void deleteBook(Integer user_Id, Integer product_Id)
+    public void deleteBook(User user_Id, Integer productId, Integer quantity)
     {
-        //cartRepo.deleteBy(Profile.getUser_Id);
+        cartRepo.deleteBy(user_Id.getId(), productId, quantity);
     }
 
-    public void updateCart(Integer user_Id, Integer product_Id, Integer quantity)
+    public double updateBook(User user_Id, Integer product_Id, Integer quantity)
     {
-        //cartRepo.update(Profile.getUserId(), product_Id, quantity);
-        //totalAmount = product.getPrice() * quantity;
-        //return total Amount
+        cartRepo.update(user_Id.getId(), product_Id, quantity);
+        //BookBrowsing book = productRepo.findById(product_Id).get();
+        //double totalAmount = book.getTotalAmount() * quantity;
+        //return totalAmount;
     }
 
 }

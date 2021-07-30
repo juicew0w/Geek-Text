@@ -11,10 +11,9 @@ public class ShoppingCart
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer cart_id;
 
-    //Change Profile data type
     @ManyToOne
     @Column(name = "user_id")
-    private Integer user_Id;
+    private User user_Id;
 
     //Change Product(Book_Browsing?) data type
     @ManyToOne
@@ -32,7 +31,7 @@ public class ShoppingCart
 
     }
 
-    public ShoppingCart(Integer cart_id, Integer user_Id, Integer productId, int quantity)
+    public ShoppingCart(Integer cart_id, User user_Id, Integer productId, int quantity)
     {
         super();
         this.cart_id = cart_id;
@@ -51,12 +50,12 @@ public class ShoppingCart
         this.cart_id = cart_id;
     }
 
-    public double getUser_Id()
+    public User getUser_Id()
     {
         return user_Id;
     }
 
-    public void setUser_Id(Integer user_Id)
+    public void setUser_Id(User user_Id)
     {
         this.user_Id = user_Id;
     }

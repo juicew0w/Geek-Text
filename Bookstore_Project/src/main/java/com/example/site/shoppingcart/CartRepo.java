@@ -1,9 +1,8 @@
 package com.example.site.shoppingcart;
 
 import com.example.site.entity.ShoppingCart;
+import com.example.site.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,21 +16,12 @@ import java.util.List;
 @Repository
 public interface CartRepo extends JpaRepository<ShoppingCart, Integer>
 {
-    public List<ShoppingCart> showByProfile(Integer profile);
+    public List<ShoppingCart> findByUser(User user_Id);
 
-    public ShoppingCart findByProfile(Integer profile, Integer product_Id);
+    public ShoppingCart findAllBy(User user_Id);
 
-    @Query()
-    @Modifying
-    public void deleteBy(Integer user_Id, Integer productId);
-    /**
-     * Updates shopping cart in regards to a certain book and certain profile.
-     * @param userId
-     * @param product_Id
-     * @param quantity
-     */
-    @Query()
-    @Modifying
-    public void update(Integer userId, Integer product_Id, Integer quantity);
+    public ShoppingCart deleteBy(Integer user_Id, Integer productId, Integer quantity);
+
+    public void update(Integer user_Id, Integer product_Id, Integer quantity);
 
 }
